@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Todo List</title>
+	<link rel="stylesheet" href="./style.css">
+	<!-- Compiled and minified CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	<!-- Icon -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<style>
+		body {
+			background-color: white;
+			color: rgb(159, 204, 114);
+			;
+		}
+
+		header {
+			color: rgb(159, 204, 114);
+			;
+			font-size: 4vw;
+			text-align: center;
+		}
+
+		footer {
+			color: rgb(159, 204, 114);
+			;
+			font-size: 2vw;
+			text-align: center;
+		}
+
+		li {
+			direction: rtl;
+			margin: 10px;
+			padding: 10px;
+		}
+
+		li:hover {
+			background-color: rgb(31, 32, 30);
+		}
+
+		.tasks {
+			background-color: rgb(159, 204, 114);
+			cursor: pointer;
+			color: rgb(159, 204, 114);
+			padding: 2px;
+		}
+
+		.tasks:hover {
+			cursor: pointer;
+			background-color: rgb(159, 204, 114);
+		}
+
+		.tasks:active {
+			background-color: rgb(159, 204, 114);
+		}
+
+		.container {
+			width: 800px !important;
+			padding: 10px;
+			border: rgb(159, 204, 114) solid;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row">
+			<header>TODO</header> <br>
+			<div class="NewTask">
+				<input id="txtNewTask" class="col s10 l11" type="text" placeholder="Add a new Task">
+				<button id="btnAddTask" class="btn col s2 l1" disabled><i class="material-icons">add</i></button>
+			</div>
+
+			<ul id="Onging-Task" class="todoList col s12">
+			</ul>
+			<footer class="footer">
+				<span>Total Tasks <span id="pendingTask"></span></span>
+			</footer>
+		</div>
+	</div>
+	<script>
+		const txtNewTask = document.getElementById("txtNewTask")
+		const btnAddTask = document.getElementById("btnAddTask")
+		const OngingTask = document.getElementById("Onging-Task")
+		const btnDoneAll = document.getElementById("btnDoneAll")
+
+
+		txtNewTask.onkeyup = () => {
+			let NewTaskUser = txtNewTask.value
+
+			if (NewTaskUser.trim() != 0) {
+				document.getElementById("btnAddTask").disabled = false
+			} else {
+				document.getElementById("btnAddTask").disabled = true
+			}
+		}
+
+
+		ShowTask()
+
+
+		btnAddTask.onclick = () => {
+			let NewTaskUser = txtNewTask.value
+			let getLocalStorage = localStorage.getItem("Ongoing Tasks")
+			if (getLocalStorage == null) {
+				TaskList = []
+			} else {
+				TaskList = JSON.parse(getLocalStorage)
+			}
+			TaskList.push(NewTaskUser)
+			localStorage.setItem("Ongoing Tasks", JSON.stringify(TaskList))
+			ShowTask()
+		}
+
+		function ShowTask() {
+			let getLocalStorage = localStorage.getItem("Ongoing Tasks")
+			if (getLocalStorage == null) {
+				TaskList = []
+			} else {
+				TaskList = JSON.parse(getLocalStorage)
+			}
+			const PendingTask = document.getElementById("pendingTask")
+			PendingTask.textContent = TaskList.length
+
+
+			let newLiTag = ''
+			TaskList.forEach((item, index) => {
+				newLiTag += `<li> ${item} <span onclick = "DoneTask(${index})"><i class="tasks material-icons circle right">check</i></span></li>`
+			});
+			OngingTask.innerHTML = newLiTag
+			txtNewTask.value = ""
+			document.getElementById("btnAddTask").disabled = true
+		}
+
+		function DoneTask(index) {
+			let getLocalStorage = localStorage.getItem("Ongoing Tasks")
+			TaskList = JSON.parse(getLocalStorage)
+			TaskList.splice(index, 1)
+			localStorage.setItem("Ongoing Tasks", JSON.stringify(TaskList))
+			ShowTask()
+		}
+
+		btnDoneAll.onclick = () => {
+			TaskList = []
+			localStorage.setItem("Ongoing Tasks", JSON.stringify(TaskList))
+			ShowTask()
+		}
+
+		document.getElementById("txtNewTask").addEventListener("keyup", function (event) {
+			if (event.keyCode === 13) {
+				document.getElementById("btnAddTask").click()
+				return false;
+			}
+		});
+	</script>
+	<!-- Compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+
+</html>
